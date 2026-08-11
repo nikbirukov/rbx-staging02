@@ -446,6 +446,18 @@ a { color: inherit; text-decoration: none; }
   .deck__col + .deck__col { border-left: 0; border-top: 1px solid var(--ink-3); }
   .contact { grid-template-columns: 1fr; }
 
+  /* Legible chart text is the point of this override — a fixed viewBox
+     scaled down to a 320-375px container renders 9px SVG-unit text at
+     3-4 actual pixels, effectively invisible. min-width restores roughly
+     the same effective scale the chart already gets on desktop; .deck__panel
+     scrolls horizontally to reach the rest, the same pattern as a wide
+     data table on mobile. Targeted by the exact viewBox already in the
+     markup so no HTML edit is needed. */
+  .deck__panel { overflow-x: auto; }
+  .deck__chart { max-width: none; }
+  .deck__chart[viewBox="0 0 800 250"] { min-width: 700px; }
+  .deck__chart[viewBox="0 0 380 205"] { min-width: 420px; }
+
   .ftree { text-align: left; }
   .ftree ul { flex-direction: column; padding-top: 0; align-items: flex-start; }
   .ftree li { align-items: flex-start; padding: 0 0 0 1.1rem; margin-top: .85rem; }
