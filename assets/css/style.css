@@ -229,8 +229,8 @@ a { color: inherit; text-decoration: none; }
 /* the boarding-record card */
 .ticket { background: var(--ink-2); border: 1px solid var(--ink-3); border-radius: var(--r); position: relative; }
 .ticket__head { display: flex; justify-content: space-between; align-items: center; padding: 1.1rem 1.4rem; }
-.ticket__head .lbl { font-family: var(--mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted-on-ink); }
-.ticket__head .id { font-family: var(--mono); font-size: .7rem; color: var(--signal); letter-spacing: .06em; }
+.ticket__head .lbl, .ticket__ref .lbl { font-family: var(--mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted-on-ink); }
+.ticket .id { font-family: var(--mono); font-size: .7rem; color: var(--signal); letter-spacing: .06em; }
 .ticket__rows { padding: .5rem 1.4rem 1.4rem; display: grid; gap: 0; }
 .trow { display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: 1rem; padding-block: 1.1rem; border-top: 1px solid var(--ink-3); opacity: .4; transition: opacity .5s var(--ease); }
 .trow:first-child { border-top: 0; }
@@ -242,9 +242,21 @@ a { color: inherit; text-decoration: none; }
 .trow__name { font-family: var(--display); font-weight: 700; font-size: 1.15rem; text-transform: uppercase; color: var(--paper); letter-spacing: 0; }
 .trow__status { font-family: var(--mono); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); transition: color .4s var(--ease); }
 .trow.is-lit .trow__status { color: var(--signal); }
-.ticket__foot { padding: 1.1rem 1.4rem; }
-.barcode { display: flex; align-items: flex-end; gap: 2px; height: 30px; }
-.barcode i { display: block; background: var(--ink-3); width: 2px; }
+/* Ticket stub-end: a QR chip paired with its reference caption, the way a
+   real boarding pass or event badge ends — replaces a flat 1D-barcode
+   strip with the same "authenticated record" idea the rest of the card
+   already makes (the same green .id treatment as the header, the same
+   ink-3 dividers). A real QR code needs its own light ground to register
+   at all — modules on --ink-2 would read as scattered dots, not a code —
+   so the chip gets a small --paper tile, the one deliberate light note on
+   an otherwise all-dark card. */
+.ticket__foot { padding: 1.3rem 1.4rem 1.5rem; display: flex; align-items: center; gap: 1.1rem; }
+.ticket__qr { flex: none; background: var(--paper); padding: 7px; border-radius: 1px; }
+.ticket__qr-code { display: block; width: 68px; height: 68px; }
+.ticket__qr-code rect { fill: var(--ink); }
+.ticket__ref { display: flex; flex-direction: column; gap: .35rem; min-width: 0; }
+.ticket__ref .id { font-size: .8rem; }
+.ticket__ref-note { margin: 0; font-size: .78rem; line-height: 1.4; color: var(--body-on-ink); }
 
 /* ---------------------------------------------------------- page header -- */
 
@@ -659,21 +671,40 @@ a { color: inherit; text-decoration: none; }
   .qgrid { grid-template-columns: 1fr; }
   .manibar__mid { display: none; }
 
-  /* Submenus become inline accordions rather than floating panels. */
+  /* No accordion at mobile: every destination is always visible, one tap
+     away, instead of tap-to-expand-then-tap-again. .nav__parent becomes a
+     plain section label (not a button — pointer-events:none takes it out
+     of the tab order and the click handler in site.js simply never fires
+     for it here).
+
+     This also removes a real bug: the previous mobile override set
+     `.sub { display: none }` / `[aria-expanded="true"] + .sub { display:
+     block }`, but .sub is a <ul>, and the earlier, unscoped base rule
+     `.nav ul { display: flex }` (style.css, no media query) has higher
+     specificity (class+type vs. this rule's class alone) — it silently won
+     regardless of which display value this block asked for, so the open
+     submenu rendered as a horizontal flex row wide enough to run off the
+     right edge of the screen (confirmed in a user screenshot: items cut
+     off mid-word, e.g. "Digital Solutions" clipped to "DIGI…SOL…"), which
+     is very likely why tapping a link there didn't seem to do anything —
+     the tap landed on a different, visually-overlapping item instead.
+     `.has-sub .sub` below (two classes) outranks `.nav ul` (class+type) on
+     specificity alone, so this can't recur even though it's now always
+     display:block rather than conditionally so. */
   .nav__parent {
-    width: 100%; justify-content: space-between; padding-block: 1.15rem;
-    font-family: var(--display); font-weight: 700; font-size: 1.3rem; text-transform: uppercase; color: var(--paper);
+    pointer-events: none; width: 100%; padding: 1.25rem 0 .25rem;
+    font-family: var(--mono); font-size: var(--step--1); letter-spacing: .1em;
+    text-transform: uppercase; color: var(--muted-on-ink);
   }
-  .nav__parent::after { width: 8px; height: 8px; border-width: 2px; }
-  .sub {
-    position: static; opacity: 1; visibility: visible; transform: none;
-    min-width: 0; background: none; border: 0;
-    border-left: 1px solid var(--ink-3); margin: 0 0 1rem; padding: 0 0 0 1.1rem;
-    display: none;
+  .nav__parent::after { display: none; }
+  .has-sub .sub {
+    display: block; position: static; opacity: 1; visibility: visible; transform: none;
+    min-width: 0; background: none; border: 0; margin: 0 0 .5rem; padding: 0;
   }
-  .has-sub:hover .sub, .has-sub:focus-within .sub { display: none; }
-  .nav__parent[aria-expanded="true"] + .sub { display: block; }
-  .sub a { padding: .85rem 0; font-family: var(--display); font-weight: 600; font-size: 1.05rem; text-transform: none; color: var(--body-on-ink); }
+  .sub a {
+    display: block; padding: .85rem 0 .85rem 1rem; border-left: 1px solid var(--ink-3);
+    font-family: var(--display); font-weight: 600; font-size: 1.15rem; text-transform: none; color: var(--paper);
+  }
 }
 
 @media (max-width: 560px) {
