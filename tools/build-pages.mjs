@@ -54,7 +54,7 @@ const footList = (pages) =>
 const SITE = 'https://www.regbox.co.uk';
 // Bump on every edit to style.css / site.js — the browser has no other
 // reason to fetch either past its first visit.
-const ASSET_VERSION = 4;
+const ASSET_VERSION = 5;
 
 const orgSchema = {
   '@context': 'https://schema.org',
@@ -144,6 +144,10 @@ const shell = ({ url, section, title, description, body }) => `<!doctype html>
     <input type="checkbox" id="navtoggle" class="navtoggle" hidden>
     <label for="navtoggle" class="burger" aria-label="Open menu"><span></span><span></span><span></span></label>
     <nav class="nav" aria-label="Primary">
+      <div class="nav__head">
+        <span class="brand__word">REGBOX<span class="bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span></span>
+        <label for="navtoggle" class="nav__close" aria-label="Close menu"><span></span><span></span></label>
+      </div>
       <ul>
         <li><a href="../"><span class="no">00</span> Home</a></li>
         <li class="has-sub">
@@ -416,50 +420,54 @@ pages.push({
                 <button type="button" class="s2" aria-pressed="true" data-series="s2"><i aria-hidden="true"></i>Exhibitor badges</button>
                 <button type="button" class="s3" aria-pressed="true" data-series="s3"><i aria-hidden="true"></i>Exhibitor bookers</button>
               </div>
-              <svg class="deck__chart" viewBox="0 0 800 250" role="img" aria-label="Line chart: visitor registrations rise through late January to a peak around 30 January, then taper toward early February; exhibitor badges and exhibitor bookers stay comparatively flat across the same period.">
-                <line class="axis" x1="60" y1="20" x2="60" y2="220" />
-                <line class="axis" x1="60" y1="220" x2="780" y2="220" />
-                <text x="50" y="224" text-anchor="end">0</text>
-                <text x="50" y="175" text-anchor="end">125</text>
-                <text x="50" y="125" text-anchor="end">250</text>
-                <text x="50" y="75" text-anchor="end">375</text>
-                <text x="50" y="25" text-anchor="end">500</text>
-                <text class="day-label" x="60" y="240">24/01</text>
-                <text class="day-label" x="200" y="240">26/01</text>
-                <text class="day-label" x="340" y="240">28/01</text>
-                <text class="day-label" x="480" y="240">30/01</text>
-                <text class="day-label" x="620" y="240">01/02</text>
-                <text class="day-label" x="760" y="240">03/02</text>
-                <path class="s3" fill="none" stroke-width="2" d="M 60,215 L 100,218 L 140,220 L 180,218 L 220,215 L 260,212 L 300,210" />
-                <path class="s2" fill="none" stroke-width="2" d="M 60,210 L 100,215 L 140,218 L 180,215 L 220,210 L 260,205 L 300,198 L 340,190 L 380,185 L 420,188 L 460,195 L 500,200 L 540,208 L 580,210 L 620,215 L 660,218 L 700,220" />
-                <path class="s1" fill="none" stroke-width="2.5" d="M 60,200 L 100,205 L 140,210 L 180,208 L 220,195 L 260,180 L 300,160 L 340,140 L 380,120 L 420,110 L 460,125 L 500,145 L 540,165 L 580,180 L 620,190 L 660,195 L 700,205 L 740,210 L 780,215" />
-              </svg>
+              <div class="deck__chart-wrap">
+                <svg class="deck__chart" viewBox="0 0 800 250" role="img" aria-label="Line chart: visitor registrations rise through late January to a peak around 30 January, then taper toward early February; exhibitor badges and exhibitor bookers stay comparatively flat across the same period.">
+                  <line class="axis" x1="60" y1="20" x2="60" y2="220" />
+                  <line class="axis" x1="60" y1="220" x2="780" y2="220" />
+                  <text x="50" y="224" text-anchor="end">0</text>
+                  <text x="50" y="175" text-anchor="end">125</text>
+                  <text x="50" y="125" text-anchor="end">250</text>
+                  <text x="50" y="75" text-anchor="end">375</text>
+                  <text x="50" y="25" text-anchor="end">500</text>
+                  <text class="day-label" x="60" y="240">24/01</text>
+                  <text class="day-label" x="200" y="240">26/01</text>
+                  <text class="day-label" x="340" y="240">28/01</text>
+                  <text class="day-label" x="480" y="240">30/01</text>
+                  <text class="day-label" x="620" y="240">01/02</text>
+                  <text class="day-label" x="760" y="240">03/02</text>
+                  <path class="s3" fill="none" stroke-width="2" d="M 60,215 L 100,218 L 140,220 L 180,218 L 220,215 L 260,212 L 300,210" />
+                  <path class="s2" fill="none" stroke-width="2" d="M 60,210 L 100,215 L 140,218 L 180,215 L 220,210 L 260,205 L 300,198 L 340,190 L 380,185 L 420,188 L 460,195 L 500,200 L 540,208 L 580,210 L 620,215 L 660,218 L 700,220" />
+                  <path class="s1" fill="none" stroke-width="2.5" d="M 60,200 L 100,205 L 140,210 L 180,208 L 220,195 L 260,180 L 300,160 L 340,140 L 380,120 L 420,110 L 460,125 L 500,145 L 540,165 L 580,180 L 620,190 L 660,195 L 700,205 L 740,210 L 780,215" />
+                </svg>
+              </div>
             </div>
 
             <div class="deck__panel">
               <h4>14-day visitor registration summary</h4>
               <p class="sub">Daily count, 24 Jan – 07 Feb</p>
-              <svg class="deck__chart" viewBox="0 0 380 205" role="img" aria-label="Bar chart, daily visitor registrations 24 January to 7 February: 32, 96, 50, 97, 24, 14, 62, 62, 71, 24, 62, 71, 24, 16, 18 — two peaks around 25 and 27 January, tapering toward early February.">
-                <line class="axis" x1="30" y1="20" x2="30" y2="170" />
-                <line class="axis" x1="30" y1="170" x2="368" y2="170" />
-                <text x="25" y="174" text-anchor="end">0</text>
-                <text x="25" y="24" text-anchor="end">100</text>
-                <rect class="bar" x="40" y="122.0" width="16" height="48.0"><title>24 January — 32 registrations</title></rect><text class="bar-label" x="48" y="117">32</text><text class="day-label" x="48" y="185">24</text>
-                <rect class="bar" x="62" y="26.0" width="16" height="144.0"><title>25 January — 96 registrations</title></rect><text class="bar-label" x="70" y="21">96</text><text class="day-label" x="70" y="185">25</text>
-                <rect class="bar" x="84" y="95.0" width="16" height="75.0"><title>26 January — 50 registrations</title></rect><text class="bar-label" x="92" y="90">50</text><text class="day-label" x="92" y="185">26</text>
-                <rect class="bar" x="106" y="24.5" width="16" height="145.5"><title>27 January — 97 registrations</title></rect><text class="bar-label" x="114" y="19">97</text><text class="day-label" x="114" y="185">27</text>
-                <rect class="bar" x="128" y="134.0" width="16" height="36.0"><title>28 January — 24 registrations</title></rect><text class="bar-label" x="136" y="129">24</text><text class="day-label" x="136" y="185">28</text>
-                <rect class="bar" x="150" y="149.0" width="16" height="21.0"><title>29 January — 14 registrations</title></rect><text class="bar-label" x="158" y="144">14</text><text class="day-label" x="158" y="185">29</text>
-                <rect class="bar" x="172" y="77.0" width="16" height="93.0"><title>30 January — 62 registrations</title></rect><text class="bar-label" x="180" y="72">62</text><text class="day-label" x="180" y="185">30</text>
-                <rect class="bar" x="194" y="77.0" width="16" height="93.0"><title>31 January — 62 registrations</title></rect><text class="bar-label" x="202" y="72">62</text><text class="day-label" x="202" y="185">31</text>
-                <rect class="bar" x="216" y="63.5" width="16" height="106.5"><title>1 February — 71 registrations</title></rect><text class="bar-label" x="224" y="58">71</text><text class="day-label" x="224" y="185">01</text>
-                <rect class="bar" x="238" y="134.0" width="16" height="36.0"><title>2 February — 24 registrations</title></rect><text class="bar-label" x="246" y="129">24</text><text class="day-label" x="246" y="185">02</text>
-                <rect class="bar" x="260" y="77.0" width="16" height="93.0"><title>3 February — 62 registrations</title></rect><text class="bar-label" x="268" y="72">62</text><text class="day-label" x="268" y="185">03</text>
-                <rect class="bar" x="282" y="63.5" width="16" height="106.5"><title>4 February — 71 registrations</title></rect><text class="bar-label" x="290" y="58">71</text><text class="day-label" x="290" y="185">04</text>
-                <rect class="bar" x="304" y="134.0" width="16" height="36.0"><title>5 February — 24 registrations</title></rect><text class="bar-label" x="312" y="129">24</text><text class="day-label" x="312" y="185">05</text>
-                <rect class="bar" x="326" y="146.0" width="16" height="24.0"><title>6 February — 16 registrations</title></rect><text class="bar-label" x="334" y="141">16</text><text class="day-label" x="334" y="185">06</text>
-                <rect class="bar" x="348" y="143.0" width="16" height="27.0"><title>7 February — 18 registrations</title></rect><text class="bar-label" x="356" y="138">18</text><text class="day-label" x="356" y="185">07</text>
-              </svg>
+              <div class="deck__chart-wrap">
+                <svg class="deck__chart" viewBox="0 0 380 205" role="img" aria-label="Bar chart, daily visitor registrations 24 January to 7 February: 32, 96, 50, 97, 24, 14, 62, 62, 71, 24, 62, 71, 24, 16, 18 — two peaks around 25 and 27 January, tapering toward early February.">
+                  <line class="axis" x1="30" y1="20" x2="30" y2="170" />
+                  <line class="axis" x1="30" y1="170" x2="368" y2="170" />
+                  <text x="25" y="174" text-anchor="end">0</text>
+                  <text x="25" y="24" text-anchor="end">100</text>
+                  <rect class="bar" x="40" y="122.0" width="16" height="48.0"><title>24 January — 32 registrations</title></rect><text class="bar-label" x="48" y="117">32</text><text class="day-label" x="48" y="185">24</text>
+                  <rect class="bar" x="62" y="26.0" width="16" height="144.0"><title>25 January — 96 registrations</title></rect><text class="bar-label" x="70" y="21">96</text><text class="day-label" x="70" y="185">25</text>
+                  <rect class="bar" x="84" y="95.0" width="16" height="75.0"><title>26 January — 50 registrations</title></rect><text class="bar-label" x="92" y="90">50</text><text class="day-label" x="92" y="185">26</text>
+                  <rect class="bar" x="106" y="24.5" width="16" height="145.5"><title>27 January — 97 registrations</title></rect><text class="bar-label" x="114" y="19">97</text><text class="day-label" x="114" y="185">27</text>
+                  <rect class="bar" x="128" y="134.0" width="16" height="36.0"><title>28 January — 24 registrations</title></rect><text class="bar-label" x="136" y="129">24</text><text class="day-label" x="136" y="185">28</text>
+                  <rect class="bar" x="150" y="149.0" width="16" height="21.0"><title>29 January — 14 registrations</title></rect><text class="bar-label" x="158" y="144">14</text><text class="day-label" x="158" y="185">29</text>
+                  <rect class="bar" x="172" y="77.0" width="16" height="93.0"><title>30 January — 62 registrations</title></rect><text class="bar-label" x="180" y="72">62</text><text class="day-label" x="180" y="185">30</text>
+                  <rect class="bar" x="194" y="77.0" width="16" height="93.0"><title>31 January — 62 registrations</title></rect><text class="bar-label" x="202" y="72">62</text><text class="day-label" x="202" y="185">31</text>
+                  <rect class="bar" x="216" y="63.5" width="16" height="106.5"><title>1 February — 71 registrations</title></rect><text class="bar-label" x="224" y="58">71</text><text class="day-label" x="224" y="185">01</text>
+                  <rect class="bar" x="238" y="134.0" width="16" height="36.0"><title>2 February — 24 registrations</title></rect><text class="bar-label" x="246" y="129">24</text><text class="day-label" x="246" y="185">02</text>
+                  <rect class="bar" x="260" y="77.0" width="16" height="93.0"><title>3 February — 62 registrations</title></rect><text class="bar-label" x="268" y="72">62</text><text class="day-label" x="268" y="185">03</text>
+                  <rect class="bar" x="282" y="63.5" width="16" height="106.5"><title>4 February — 71 registrations</title></rect><text class="bar-label" x="290" y="58">71</text><text class="day-label" x="290" y="185">04</text>
+                  <rect class="bar" x="304" y="134.0" width="16" height="36.0"><title>5 February — 24 registrations</title></rect><text class="bar-label" x="312" y="129">24</text><text class="day-label" x="312" y="185">05</text>
+                  <rect class="bar" x="326" y="146.0" width="16" height="24.0"><title>6 February — 16 registrations</title></rect><text class="bar-label" x="334" y="141">16</text><text class="day-label" x="334" y="185">06</text>
+                  <rect class="bar" x="348" y="143.0" width="16" height="27.0"><title>7 February — 18 registrations</title></rect><text class="bar-label" x="356" y="138">18</text><text class="day-label" x="356" y="185">07</text>
+                </svg>
+              </div>
             </div>
           </div>
 

@@ -449,11 +449,15 @@ a { color: inherit; text-decoration: none; }
   /* Legible chart text is the point of this override — a fixed viewBox
      scaled down to a 320-375px container renders 9px SVG-unit text at
      3-4 actual pixels, effectively invisible. min-width restores roughly
-     the same effective scale the chart already gets on desktop; .deck__panel
-     scrolls horizontally to reach the rest, the same pattern as a wide
-     data table on mobile. Targeted by the exact viewBox already in the
-     markup so no HTML edit is needed. */
-  .deck__panel { overflow-x: auto; }
+     the same effective scale the chart already gets on desktop.
+     Scoped to .deck__chart-wrap, NOT the whole .deck__panel: an earlier
+     pass put overflow-x:auto on the panel itself, which also stretched the
+     panel's scrollable content box to the chart's full width — the legend
+     sitting in that same panel no longer needed to wrap, so it just laid
+     out at its natural width and got carried mostly off-screen, cut off at
+     the viewport edge with no visible scrollbar. Only the chart itself
+     should scroll; the heading and legend stay put. */
+  .deck__chart-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .deck__chart { max-width: none; }
   .deck__chart[viewBox="0 0 800 250"] { min-width: 700px; }
   .deck__chart[viewBox="0 0 380 205"] { min-width: 420px; }
@@ -600,31 +604,76 @@ a { color: inherit; text-decoration: none; }
 }
 
 @media (max-width: 860px) {
-  .burger { display: flex; flex-direction: column; justify-content: center; gap: 5px; width: 42px; height: 42px; cursor: pointer; }
-  .burger span { display: block; height: 2px; background: var(--paper); }
-  .nav { display: none; position: absolute; left: 0; right: 0; top: 100%; background: var(--ink); flex-direction: column; align-items: stretch; gap: 0; padding: .5rem var(--gut) 1.5rem; border-top: 1px solid var(--ink-3); }
+  .burger {
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    gap: 5px; width: 44px; height: 44px; cursor: pointer;
+  }
+  .burger span { display: block; width: 22px; height: 2px; background: var(--paper); transition: transform .22s var(--ease), opacity .18s var(--ease); }
+  /* Hamburger becomes a close (X) once open — a real state change, not
+     decoration, so the same control opens and closes the menu. */
+  .navtoggle:checked ~ .burger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .navtoggle:checked ~ .burger span:nth-child(2) { opacity: 0; }
+  .navtoggle:checked ~ .burger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* Full-screen takeover rather than a push-down accordion: the previous
+     panel was only as tall as its own content (position:absolute, no
+     explicit height), so the page underneath stayed visible and scrollable
+     beneath/through it. .site-head is position:sticky, which — like any
+     non-static position — becomes the containing block for a position:fixed
+     descendant, so .nav's fixed positioning would resolve against the
+     ~80px-tall header box, not the viewport. :has() drops .site-head to
+     position:static for as long as the menu is open, so .nav's fixed
+     inset:0 resolves against the real viewport instead. */
+  .site-head:has(.navtoggle:checked) { position: static; }
+  body:has(.navtoggle:checked) { overflow: hidden; }
+
+  .nav {
+    display: none;
+    position: fixed; inset: 0; z-index: 40;
+    background: var(--ink);
+    flex-direction: column; align-items: stretch; gap: 0;
+    padding: 0; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  }
   .navtoggle:checked ~ .nav { display: flex; }
+
+  .nav__head { flex: none; display: flex; align-items: center; justify-content: space-between; padding: 1.1rem var(--gut); border-bottom: 1px solid var(--ink-3); }
+  .nav__head .brand__word { font-size: 1.5rem; }
+  .nav__close { display: flex; align-items: center; justify-content: center; position: relative; width: 44px; height: 44px; cursor: pointer; }
+  .nav__close span { position: absolute; width: 22px; height: 2px; background: var(--paper); }
+  .nav__close span:first-child { transform: rotate(45deg); }
+  .nav__close span:last-child { transform: rotate(-45deg); }
+
   .site-head__in { position: relative; flex-wrap: wrap; }
-  .nav > ul { flex-direction: column; gap: 0; }
+  .nav > ul { flex: none; flex-direction: column; gap: 0; padding: .5rem var(--gut) 0; }
   .nav > ul > li { border-bottom: 1px solid var(--ink-3); }
-  .nav ul a { padding-block: .9rem; }
-  .nav__cta { margin-top: 1.1rem; align-self: flex-start; }
+  .nav ul a {
+    padding-block: 1.15rem; font-family: var(--display); font-weight: 700;
+    font-size: 1.3rem; text-transform: uppercase; letter-spacing: -.005em; color: var(--paper);
+  }
+  .nav ul a .no { display: none; } /* a "00" numeral prefix reads as clutter at this size */
+  .nav__cta { margin: 1.5rem var(--gut) 2rem; align-self: stretch; justify-content: center; }
+
   .mrow { grid-template-columns: 32px 1fr; }
-  .mrow__meta { grid-column: 2; text-align: left; }
+  .mrow__name, .mrow__desc, .mrow__meta { grid-column: 2; }
+  .mrow__meta { text-align: left; margin-top: .35rem; }
   .qgrid { grid-template-columns: 1fr; }
   .manibar__mid { display: none; }
 
   /* Submenus become inline accordions rather than floating panels. */
-  .nav__parent { width: 100%; justify-content: space-between; padding-block: .9rem; }
+  .nav__parent {
+    width: 100%; justify-content: space-between; padding-block: 1.15rem;
+    font-family: var(--display); font-weight: 700; font-size: 1.3rem; text-transform: uppercase; color: var(--paper);
+  }
+  .nav__parent::after { width: 8px; height: 8px; border-width: 2px; }
   .sub {
     position: static; opacity: 1; visibility: visible; transform: none;
     min-width: 0; background: none; border: 0;
-    border-left: 1px solid var(--ink-3); margin: 0 0 .75rem; padding: 0 0 0 1rem;
+    border-left: 1px solid var(--ink-3); margin: 0 0 1rem; padding: 0 0 0 1.1rem;
     display: none;
   }
   .has-sub:hover .sub, .has-sub:focus-within .sub { display: none; }
   .nav__parent[aria-expanded="true"] + .sub { display: block; }
-  .sub a { padding: .6rem 0; }
+  .sub a { padding: .85rem 0; font-family: var(--display); font-weight: 600; font-size: 1.05rem; text-transform: none; color: var(--body-on-ink); }
 }
 
 @media (max-width: 560px) {
