@@ -54,7 +54,7 @@ const footList = (pages) =>
 const SITE = 'https://www.regbox.co.uk';
 // Bump on every edit to style.css / site.js — the browser has no other
 // reason to fetch either past its first visit.
-const ASSET_VERSION = 7;
+const ASSET_VERSION = 8;
 
 const orgSchema = {
   '@context': 'https://schema.org',

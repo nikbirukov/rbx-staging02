@@ -171,7 +171,10 @@ a { color: inherit; text-decoration: none; }
 }
 .nav ul a .no { color: var(--signal); font-size: .82em; }
 .nav ul a:hover { color: var(--paper); border-color: var(--signal); }
-.navtoggle, .burger { display: none; }
+/* .nav__head (wordmark + close button) belongs to the mobile full-screen
+   overlay only — without this it renders inline in the desktop header as a
+   second REGBOX wordmark beside the nav links. */
+.navtoggle, .burger, .nav__head, .nav__close { display: none; }
 
 /* Organisers/Exhibitors group other pages and have none of their own on the
    live site (href="#"), so they're buttons, not links — matches regbox.co.uk. */
@@ -320,7 +323,14 @@ a { color: inherit; text-decoration: none; }
 .deck__kpi .l { margin-top: .5rem; font-size: var(--step--1); color: var(--muted-on-ink); }
 
 .deck__panels { display: grid; grid-template-columns: 1.6fr 1fr; }
-.deck__col { display: flex; flex-direction: column; }
+/* min-width:0 — a grid item's automatic minimum size is its content's
+   min-content width, so without this .deck__col refuses to shrink below the
+   widest thing inside it. On mobile the charts carry a 700px min-width, so
+   the column stayed 700px+ inside a ~335px card and the charts ran straight
+   off the screen; the wrapper's own overflow-x never engaged because nothing
+   upstream ever constrained it. */
+.deck__col { display: flex; flex-direction: column; min-width: 0; }
+.deck__panel { min-width: 0; }
 .deck__col + .deck__col { border-left: 1px solid var(--ink-3); }
 .deck__panel { padding: clamp(1.25rem, 2vw, 1.75rem); }
 .deck__panel + .deck__panel { border-top: 1px solid var(--ink-3); }
@@ -639,12 +649,16 @@ a { color: inherit; text-decoration: none; }
   .site-head:has(.navtoggle:checked) { position: static; }
   body:has(.navtoggle:checked) { overflow: hidden; }
 
+  /* Three-part column: header pinned top, links scroll in the middle, CTA
+     pinned bottom. Previously the whole panel scrolled as one, which pushed
+     "Request a quote" off the bottom of the screen — it was only reachable
+     by scrolling the menu, so it read as missing. */
   .nav {
     display: none;
     position: fixed; inset: 0; z-index: 40;
     background: var(--ink);
     flex-direction: column; align-items: stretch; gap: 0;
-    padding: 0; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    padding: 0; overflow: hidden;
   }
   .navtoggle:checked ~ .nav { display: flex; }
 
@@ -656,14 +670,26 @@ a { color: inherit; text-decoration: none; }
   .nav__close span:last-child { transform: rotate(-45deg); }
 
   .site-head__in { position: relative; flex-wrap: wrap; }
-  .nav > ul { flex: none; flex-direction: column; gap: 0; padding: .5rem var(--gut) 0; }
+  /* min-height:0 — a flex item won't shrink below its content's height
+     without it, so the list would push the CTA off instead of scrolling. */
+  .nav > ul {
+    flex: 1 1 auto; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    flex-direction: column; gap: 0; padding: .5rem var(--gut) 1rem;
+  }
   .nav > ul > li { border-bottom: 1px solid var(--ink-3); }
   .nav ul a {
     padding-block: 1.15rem; font-family: var(--display); font-weight: 700;
     font-size: 1.3rem; text-transform: uppercase; letter-spacing: -.005em; color: var(--paper);
   }
   .nav ul a .no { display: none; } /* a "00" numeral prefix reads as clutter at this size */
-  .nav__cta { margin: 1.5rem var(--gut) 2rem; align-self: stretch; justify-content: center; }
+  /* flex:none so the pinned CTA keeps its full height when the list above
+     is long; the extra bottom padding clears a phone's home indicator. */
+  .nav__cta {
+    flex: none; align-self: stretch; justify-content: center;
+    margin: 0 var(--gut); margin-block: 1.1rem;
+    margin-bottom: calc(1.1rem + env(safe-area-inset-bottom));
+    border-top: 0;
+  }
 
   .mrow { grid-template-columns: 32px 1fr; }
   .mrow__name, .mrow__desc, .mrow__meta { grid-column: 2; }
