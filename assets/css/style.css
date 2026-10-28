@@ -28,6 +28,7 @@
   --ink: #0C0F0D;
   --ink-2: #171B18;        /* panel tone one step up from the ground, on dark */
   --ink-3: #23281F;        /* hairline / row-divider tone on dark */
+  --line-on-ink: #666A5C;  /* strokes that must be seen (diagram connectors, outlines): 3.1:1 on ink-2 */
   --paper: #F3EEE1;
   --paper-2: #E7DFC9;      /* ticket-stock shade for alternating rows, on light */
   --line-paper: #D9CFB2;
@@ -365,8 +366,11 @@ a { color: inherit; text-decoration: none; }
 .deck__chart .s2 { stroke: var(--paper); stroke-dasharray: 5 3; opacity: .55; transition: opacity .3s var(--ease); }
 .deck__chart .s3 { stroke: var(--muted-on-ink); stroke-dasharray: 1 3; stroke-linecap: round; transition: opacity .3s var(--ease); }
 .deck__chart .s1.is-off, .deck__chart .s2.is-off, .deck__chart .s3.is-off { opacity: 0; }
-.deck__chart .s1 { stroke-dasharray: 900; stroke-dashoffset: 900; transition: stroke-dashoffset 1.1s var(--ease) .3s, opacity .3s var(--ease); }
-.deck.is-in .deck__chart .s1 { stroke-dashoffset: 0; }
+/* Same rule as .ftree: drawn-in by default, only held back (fully dashed
+   out) while JS is confirmed running and the deck has not scrolled into
+   view — otherwise a failed reveal leaves the main trend line missing. */
+.deck__chart .s1 { stroke-dasharray: 900; stroke-dashoffset: 0; transition: stroke-dashoffset 1.1s var(--ease) .3s, opacity .3s var(--ease); }
+.js .deck:not(.is-in) .deck__chart .s1 { stroke-dashoffset: 900; }
 
 .deck__chart .bar { fill: var(--signal); transition: fill .15s var(--ease); }
 .deck__chart .bar:hover { fill: var(--signal-hover); }
@@ -399,40 +403,52 @@ a { color: inherit; text-decoration: none; }
 .ftree, .ftree ul { list-style: none; margin: 0; padding: 0; }
 .ftree {
   margin-top: 2rem; text-align: center; overflow-x: auto; padding-bottom: .5rem;
-  opacity: 0; transform: translateY(10px);
   transition: opacity .6s var(--ease), transform .6s var(--ease);
 }
-.deck.is-in .ftree { opacity: 1; transform: none; }
+/* Visible by default; only hidden-until-revealed once JS has confirmed it
+   is running (the inline `js` class on <html>) and the deck has not yet
+   scrolled into view. The entrance used to be opacity:0 unconditionally,
+   so anything that stopped the reveal script firing — script blocked or
+   erroring, an observer that never reports — left the whole builder
+   invisible with no way back. Now the worst case is "no entrance animation". */
+.js .deck:not(.is-in) .ftree { opacity: 0; transform: translateY(10px); }
 .ftree ul { padding-top: 28px; position: relative; display: flex; justify-content: center; }
 .ftree li {
   display: flex; flex-direction: column; align-items: center;
   list-style-type: none; position: relative; padding: 28px 8px 0 8px;
 }
+/* Strokes use --line-on-ink, not --ink-3. --ink-3 is a hairline for dividers
+   between rows (1.16:1 on the --ink-2 panel) — fine there, but as the
+   connectors and node outlines of a diagram it made the tree effectively
+   invisible. --line-on-ink is 3.1:1, the WCAG minimum for graphics. */
 .ftree li::before, .ftree li::after {
   content: ""; position: absolute; top: 0; right: 50%;
-  border-top: 1px solid var(--ink-3); width: 50%; height: 28px;
+  border-top: 1px solid var(--line-on-ink); width: 50%; height: 28px;
 }
-.ftree li::after { right: auto; left: 50%; border-left: 1px solid var(--ink-3); }
+.ftree li::after { right: auto; left: 50%; border-left: 1px solid var(--line-on-ink); }
 .ftree li:only-child::after, .ftree li:only-child::before { display: none; }
 .ftree li:only-child { padding-top: 0; }
 .ftree li:first-child::before, .ftree li:last-child::after { border: 0 none; }
-.ftree li:last-child::before { border-right: 1px solid var(--ink-3); }
+.ftree li:last-child::before { border-right: 1px solid var(--line-on-ink); }
 .ftree ul ul::before {
   content: ""; position: absolute; top: 0; left: 50%;
-  border-left: 1px solid var(--ink-3); width: 0; height: 28px;
+  border-left: 1px solid var(--line-on-ink); width: 0; height: 28px;
 }
 
 .fnode {
   display: inline-flex; flex-direction: column; gap: .25rem;
   min-width: 168px; max-width: 208px;
-  background: var(--ink); border: 1px solid var(--ink-3);
+  background: var(--ink); border: 1px solid var(--line-on-ink);
   padding: .7rem .9rem; text-align: left;
   transition: opacity .25s var(--ease);
 }
 .fnode__type { font-family: var(--mono); font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted-on-ink); display: flex; align-items: center; gap: .4rem; }
 .fnode__type::before { content: ""; width: 12px; height: 0; border-top-width: 2px; border-top-style: solid; display: inline-block; }
 .fnode__label { font-size: var(--step--1); color: var(--paper); line-height: 1.35; }
-.fnode[data-type="trigger"] { background: var(--ink-2); }
+/* The entry point. Previously --ink-2, identical to the panel behind it, so
+   with a hairline border it disappeared; an orange outline marks where the
+   flow starts. */
+.fnode[data-type="trigger"] { background: var(--ink); border-color: var(--signal); }
 .fnode[data-type="trigger"] .fnode__type { color: var(--signal); }
 .fnode[data-type="trigger"] .fnode__type::before { border-color: var(--signal); }
 .fnode[data-type="decision"] .fnode__type { color: var(--signal); }
@@ -442,7 +458,7 @@ a { color: inherit; text-decoration: none; }
 .fnode.is-off { opacity: .2; }
 .fnode--wait {
   display: inline-block; min-width: 0; max-width: none;
-  border: 1px dashed var(--ink-3); border-radius: 999px; background: none;
+  border: 1px dashed var(--line-on-ink); border-radius: 999px; background: none;
   padding: .35rem .9rem;
 }
 .fnode--wait .fnode__label { font-family: var(--mono); font-size: .68rem; color: var(--muted-on-ink); letter-spacing: .04em; }
@@ -495,7 +511,13 @@ a { color: inherit; text-decoration: none; }
   .ftree ul { flex-direction: column; padding-top: 0; align-items: flex-start; }
   .ftree li { align-items: flex-start; padding: 0 0 0 1.1rem; margin-top: .85rem; }
   .ftree li::before, .ftree li::after, .ftree ul ul::before { display: none; }
-  .ftree li ul { border-left: 1px solid var(--ink-3); margin-left: .55rem; padding-left: 0; }
+  .ftree li ul { border-left: 1px solid var(--line-on-ink); margin-left: .55rem; padding-left: 0; }
+  /* Each nesting level adds indent, so by the third level the 168px node
+     minimum no longer fits the panel and the deepest nodes ran off the
+     right edge (and the tree grew its own horizontal scrollbar). Nodes may
+     shrink and wrap their label instead. */
+  .ftree li, .ftree ul { min-width: 0; max-width: 100%; }
+  .fnode { min-width: 0; max-width: 100%; }
   .mock { grid-template-columns: 1fr; }
 }
 

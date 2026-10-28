@@ -54,7 +54,7 @@ const footList = (pages) =>
 const SITE = 'https://www.regbox.co.uk';
 // Bump on every edit to style.css / site.js — the browser has no other
 // reason to fetch either past its first visit.
-const ASSET_VERSION = 9;
+const ASSET_VERSION = 11;
 
 const orgSchema = {
   '@context': 'https://schema.org',
@@ -111,6 +111,7 @@ const shell = ({ url, section, title, description, body }) => `<!doctype html>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@500;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add("js")</script>
 <link rel="stylesheet" href="../assets/css/style.css?v=${ASSET_VERSION}">
 
 <script type="application/ld+json">${JSON.stringify(orgSchema)}</script>
