@@ -6,16 +6,22 @@
    for a show floor, set in split-flap and ticket-stock materials, not a
    generic SaaS dashboard mock.
 
-   Palette is a deliberate departure from the brand's own consumer orange —
-   this is a concept exploration, not the shipped identity. Near-black board,
-   warm ticket-stock paper, one phosphor-green signal colour (the "admitted"
-   light), used the way a real departures board uses it: sparingly, for status.
+   Palette: near-black board, warm ticket-stock paper, and RegBox's own brand
+   orange (#FF7300) as the one signal colour (the "admitted" light), used the
+   way a real departures board uses it: sparingly, for status. This is the
+   dark counterpart to v3's light theme — same brand colour, opposite ground.
 
-   Contrast, measured:
-     #34F08A (signal) on #0C0F0D (ink)   ≈ 15.4:1 — safe for any text size.
-     #0B5C2E (signal-deep) on #F3EEE1 (paper) ≈ 8.9:1 — safe for body text.
-     #C9C3AF (muted-on-ink) on #0C0F0D        ≈ 9.7:1 — body copy on dark.
+   Contrast, measured (WCAG 2.x relative luminance):
+     #FF7300 (signal) on #0C0F0D (ink)        ≈ 7.1:1 — safe for any text size.
+     #FF7300 (signal) on #171B18 (ink-2)      ≈ 6.4:1 — safe on dark panels.
+     #0C0F0D (ink) on #FF7300 fills           ≈ 7.1:1 — button text.
+     #A84400 (signal-deep) on #F3EEE1 (paper) ≈ 5.2:1 — safe for body text.
+     #A84400 (signal-deep) on #E7DFC9 (paper-2) ≈ 4.5:1 — safe for body text.
+     #C9C3AF (body-on-ink) on #0C0F0D         ≈ 10.9:1 — body copy on dark.
      #3A362C (body) on #F3EEE1                ≈ 10.8:1 — body copy on paper.
+   Plain #FF7300 and white-on-orange never carry text on a light ground (under
+   3:1); the deeper #A84400 is the only orange permitted there. v3's #C25400 is not
+   used here: v2's paper is darker than v3's, so it falls to ≈4.0:1.
    ========================================================================== */
 
 :root {
@@ -26,9 +32,10 @@
   --paper-2: #E7DFC9;      /* ticket-stock shade for alternating rows, on light */
   --line-paper: #D9CFB2;
 
-  --signal: #34F08A;       /* bright phosphor — large text, icons, glow, dark ground only */
-  --signal-deep: #0B5C2E;  /* body-size signal text, light ground */
-  --signal-dim: rgba(52, 240, 138, .16);
+  --signal: #FF7300;       /* brand orange — text, icons, glow, fills on the dark ground */
+  --signal-deep: #A84400;  /* body-size orange text on the light (paper) ground */
+  --signal-hover: #FF8A28; /* one step lighter, for hover on signal fills */
+  --signal-dim: rgba(255, 115, 0, .16);
 
   --body-on-ink: #C9C3AF;
   --muted-on-ink: #8B8776;
@@ -120,7 +127,7 @@ a { color: inherit; text-decoration: none; }
 }
 .btn::before { content: "»"; font-family: var(--mono); }
 .btn--primary { background: var(--signal); color: var(--ink); }
-.btn--primary:hover { background: #5CF7A3; transform: translateY(-2px); }
+.btn--primary:hover { background: var(--signal-hover); transform: translateY(-2px); }
 .btn--primary:active { transform: translateY(0); }
 .btn--line { border-color: var(--ink-3); color: var(--body-on-ink); }
 .btn--line:hover { border-color: var(--signal); color: var(--signal); }
@@ -248,7 +255,7 @@ a { color: inherit; text-decoration: none; }
 /* Ticket stub-end: a QR chip paired with its reference caption, the way a
    real boarding pass or event badge ends — replaces a flat 1D-barcode
    strip with the same "authenticated record" idea the rest of the card
-   already makes (the same green .id treatment as the header, the same
+   already makes (the same orange .id treatment as the header, the same
    ink-3 dividers). A real QR code needs its own light ground to register
    at all — modules on --ink-2 would read as scattered dots, not a code —
    so the chip gets a small --paper tile, the one deliberate light note on
@@ -302,7 +309,7 @@ a { color: inherit; text-decoration: none; }
 
 /* ----------------------------------------------------------- event deck -- */
 /* A sample Event Deck view, redrawn in the ticket/manifest system: bordered
-   panels in --ink-2, hairline --ink-3 dividers, the phosphor signal reserved
+   panels in --ink-2, hairline --ink-3 dividers, the orange signal reserved
    for the one series or figure that matters most per panel. Real
    interaction, not more decoration: a clickable legend that isolates a
    series, and native title-tooltips on the bar chart (the one chart here
@@ -362,7 +369,7 @@ a { color: inherit; text-decoration: none; }
 .deck.is-in .deck__chart .s1 { stroke-dashoffset: 0; }
 
 .deck__chart .bar { fill: var(--signal); transition: fill .15s var(--ease); }
-.deck__chart .bar:hover { fill: #5CF7A3; }
+.deck__chart .bar:hover { fill: var(--signal-hover); }
 .deck__chart .bar-label { fill: var(--paper); font-weight: 600; text-anchor: middle; }
 .deck__chart .day-label { text-anchor: middle; }
 

@@ -12,8 +12,8 @@
  * Same content as v4's generator — real product descriptions, real
  * Exhibitor Marketing pricing, real portfolio list, drawn from a live read
  * of regbox.co.uk (fetched 2026-08-06) — restyled here in v2's own ticket/
- * manifest system (ink ground, phosphor-green signal, Big Shoulders) rather
- * than v4's Swiss/orange system. Nothing here is invented.
+ * manifest system (ink ground, brand-orange signal, Big Shoulders) rather
+ * than v4's Swiss system. Nothing here is invented.
  */
 
 import { mkdir, writeFile } from 'node:fs/promises';
@@ -54,7 +54,7 @@ const footList = (pages) =>
 const SITE = 'https://www.regbox.co.uk';
 // Bump on every edit to style.css / site.js — the browser has no other
 // reason to fetch either past its first visit.
-const ASSET_VERSION = 8;
+const ASSET_VERSION = 9;
 
 const orgSchema = {
   '@context': 'https://schema.org',
@@ -95,7 +95,7 @@ const shell = ({ url, section, title, description, body }) => `<!doctype html>
 <meta name="description" content="${description}">
 <link rel="canonical" href="${SITE}${url}">
 <meta name="robots" content="index, follow">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230C0F0D'/%3E%3Crect x='9' y='9' width='14' height='14' fill='%2334F08A'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230C0F0D'/%3E%3Crect x='9' y='9' width='14' height='14' fill='%23FF7300'/%3E%3C/svg%3E">
 <meta name="theme-color" content="#0C0F0D">
 
 <meta property="og:type" content="website">

@@ -2,7 +2,7 @@
 
 A homepage-and-site redesign concept for [regbox.co.uk](https://www.regbox.co.uk/), staged here for review.
 
-Static HTML/CSS/vanilla JS, no build step, no framework. A ticket/departures-board design system — near-black ground, phosphor-green signal colour, split-flap and boarding-record motifs — matching the live site's real navigation, product pages and content.
+Static HTML/CSS/vanilla JS, no build step, no framework. A ticket/departures-board design system — near-black ground, brand-orange (#FF7300) signal colour, split-flap and boarding-record motifs — matching the live site's real navigation, product pages and content.
 
 ## Structure
 
